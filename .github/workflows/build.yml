@@ -44,6 +44,8 @@ jobs:
           Start-Sleep -Seconds 10
           $process.Refresh()
           if ($process.HasExited) { throw "Application exited during startup smoke test." }
+          if ($process.MainWindowHandle -eq 0) { throw "Application did not create a main window." }
+          if ($process.MainWindowTitle -notlike "Note-all-in-one*") { throw "Application main window title is unexpected." }
           Stop-Process -Id $process.Id -Force
       - uses: actions/upload-artifact@v4
         with:
@@ -68,21 +70,35 @@ jobs:
       - name: Smoke-test Linux AppImage
         run: |
           sudo apt-get update
-          sudo apt-get install -y xvfb
+          sudo apt-get install -y xvfb xdotool
           app="$(find dist -maxdepth 1 -type f -name '*.AppImage' -print -quit)"
           test -n "$app"
           chmod +x "$app"
           "$app" --appimage-extract >/dev/null
           cd squashfs-root
-          set +e
-          xvfb-run --auto-servernum timeout --signal=TERM --kill-after=5s 15s \
-            ./AppRun --user-data-dir="$RUNNER_TEMP/Note-all-in-one-profile"
-          status=$?
-          set -e
-          if [ "$status" -ne 124 ]; then
-            echo "AppImage startup smoke test failed with exit code $status."
+          xvfb-run --auto-servernum bash -c '
+            ./AppRun --disable-gpu --disable-dev-shm-usage --user-data-dir="$1" &
+            app_pid=$!
+            cleanup() {
+              kill "$app_pid" 2>/dev/null || true
+              wait "$app_pid" 2>/dev/null || true
+            }
+            trap cleanup EXIT
+            for _ in $(seq 1 20); do
+              window="$(xdotool search --onlyvisible --name "Note-all-in-one" 2>/dev/null | head -n 1)"
+              if [ -n "$window" ]; then
+                xdotool getwindowname "$window"
+                exit 0
+              fi
+              if ! kill -0 "$app_pid" 2>/dev/null; then
+                echo "App exited before showing a window." >&2
+                exit 1
+              fi
+              sleep 1
+            done
+            echo "App did not create a visible window." >&2
             exit 1
-          fi
+          ' smoke-test "$RUNNER_TEMP/Note-all-in-one-profile"
       - uses: actions/upload-artifact@v4
         with:
           name: Note-all-in-one-Linux
