@@ -13,9 +13,10 @@ dipendenze usare `npm ci`. I comandi disponibili sono:
 - `npm run dist:linux` da Linux x64 per creare AppImage e pacchetto `.deb`;
 - `npm run build:offline` per generare la versione HTML offline.
 
-Le istruzioni dettagliate sono in [COSTRUIRE.txt](COSTRUIRE.txt). Questo
-repository pubblica il codice sorgente e i materiali necessari alla build,
-non gli installer o gli altri artefatti binari della distribuzione.
+Le istruzioni dettagliate sono in [COSTRUIRE.txt](COSTRUIRE.txt). Gli installer
+verificati sono pubblicati nella sezione [GitHub Releases](https://github.com/Raffo117/Note-all-in-one/releases);
+ogni release indica i checksum, il commit sorgente corrispondente e le
+istruzioni per l'installazione.
 
 ## Licenza
 
