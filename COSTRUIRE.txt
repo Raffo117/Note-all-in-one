@@ -1,0 +1,9 @@
+Per costruire l'app (serve Node.js installato, nodejs.org, versione LTS):
+1) Apri il terminale in questa cartella
+2) npm ci
+3) npm run dist:win        -> installer Windows in dist\
+4) Pacchetto Linux portabile (da Windows o Linux):
+   npm run dist:linux:portable
+   python scripts/make-linux-portable.py   -> archivio Linux in dist\
+5) AppImage e .deb vanno compilati da Linux x64:
+   npm run dist:linux

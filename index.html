@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; script-src-attr 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Note-all-in-one 1.0.13</title>
+<script src="./vendor/mermaid.min.js" defer></script>
+<style>
+:root{--bg-main:#121212;--bg-toolbar:#1e1e1e;--bg-editor:#181818;--bg-preview:#151515;--text-main:#e0e0e0;--accent:#6c5ce7;--accent-hover:#5f27cd;--pro-color:#00b894;--con-color:#d63031;--bg-map:#0f0f0f;--ruler-color:rgba(255,255,255,.05);--editor-line-height:32px;--editor-font-size:17px;--note-font:system-ui,sans-serif;--radius-main:12px;--radius-sm:8px}
+body{--on-accent:#fff;--accent-text:var(--accent);--pro-text:var(--pro-color);--ui-soft:rgba(255,255,255,.05);--ui-hover:rgba(255,255,255,.1);--ui-border:rgba(255,255,255,.1);--ui-field:rgba(0,0,0,.3);--ui-off:rgba(255,255,255,.18)}
+body.theme-notte{--accent-text:#8fa8e8;--bg-main:#0b1220;--bg-toolbar:#111b2e;--bg-editor:#0e1626;--bg-preview:#0b1220;--bg-map:#080e1a;--text-main:#dce6f5;--accent:#4a69bd}
+body.theme-foresta{--accent-text:#4fc27f;--bg-main:#0f1a14;--bg-toolbar:#16261d;--bg-editor:#121f17;--bg-preview:#0f1a14;--bg-map:#0a130e;--text-main:#dcefe2;--accent:#1e8449}
+body.theme-seppia{--ui-soft:rgba(0,0,0,.05);--ui-hover:rgba(0,0,0,.1);--ui-border:rgba(0,0,0,.22);--ui-field:rgba(255,255,255,.6);--ui-off:rgba(0,0,0,.25);--pro-text:#00755d;--accent-text:#6b4f26;--bg-main:#f4ecd8;--bg-toolbar:#eaddc5;--bg-editor:#f9f3e3;--bg-preview:#f4ecd8;--bg-map:#efe5cc;--text-main:#3b3226;--ruler-color:rgba(0,0,0,.08);--accent:#8a6a3b}
+body.theme-chiaro{--on-accent:#06121f;--accent-hover:#63aef5;--reader-pivot:#06121f;--ui-soft:rgba(0,0,0,.05);--ui-hover:rgba(0,0,0,.1);--ui-border:rgba(0,0,0,.22);--ui-field:rgba(255,255,255,.6);--ui-off:rgba(0,0,0,.25);--pro-text:#00755d;--accent-text:#0662b0;--bg-main:#f5f5f5;--bg-toolbar:#ebebeb;--bg-editor:#fff;--bg-preview:#fafafa;--bg-map:#f0f0f0;--text-main:#1a1a1a;--ruler-color:rgba(0,0,0,.06);--accent:#0984e3}
+body.theme-notte{--reader-pivot:#8fa8e8}
+body.theme-foresta{--reader-pivot:#4fc27f}
+body.theme-seppia{--reader-pivot:#6b4f26}
+body.theme-scifi{--on-accent:#04121a;--accent-hover:#55e5ff;--reader-pivot:#00d2ff;--bg-main:#05050a;--bg-toolbar:#0a0a14;--bg-editor:#080811;--bg-preview:#05050a;--bg-map:#030308;--text-main:#b8c6db;--accent:#00d2ff;--pro-color:#0fc;--con-color:#ff0055}
+body{display:flex;flex-direction:column;font-family:system-ui,sans-serif;background:var(--bg-main);color:var(--text-main);margin:0;height:100vh;height:100dvh;overflow:hidden;transition:background-color .3s,color .3s}
+body.dyslexia-mode{--bg-editor:#FAF3E0;--bg-preview:#FAF3E0;--pro-text:#00755d;--editor-line-height:40px;--editor-font-size:19px}body.dyslexia-mode{--reader-pivot:#8b1a1a}body.dyslexia-mode #editor,body.dyslexia-mode #text-preview{color:#1A1A1A}body.dyslexia-mode .c-important{color:#b71c1c}body.dyslexia-mode .c-doubt{color:#7a5d00}body.dyslexia-mode .c-note{color:#0b5394}body.dyslexia-mode #simplify-box{color:#1A1A1A;background:linear-gradient(rgba(0,150,120,.18),rgba(0,150,120,.18)),#FAF3E0}
+body.dyslexia-mode #editor,body.dyslexia-mode #text-preview{font-family:system-ui,sans-serif!important;letter-spacing:.15em;word-spacing:.35em;font-weight:600}
+body.visual-ruler #editor{background-image:repeating-linear-gradient(transparent,transparent calc(var(--editor-line-height) - 2px),var(--ruler-color) calc(var(--editor-line-height) - 2px),var(--ruler-color) var(--editor-line-height));background-size:100% var(--editor-line-height);background-position:0 20px;background-attachment:local}
+body.autism-safe *{transition:none!important;animation:none!important;box-shadow:none!important;border-radius:0!important}
+body.autism-safe{--bg-main:#222;--bg-toolbar:#1c1c1c;--bg-editor:#262626;--bg-preview:#262626;--bg-map:#222;--text-main:#b3b3b3;--accent:#5f6f82;--accent-text:#b8c4d2}
+body.focus-mode .output-container{display:none!important}
+body.focus-mode.reader-on .output-container{display:flex!important;position:relative;z-index:11}
+body.focus-mode.reader-on #map-preview-container,body.focus-mode.reader-on #simplify-box{display:none!important}
+body.focus-mode #editor{border:none;margin:20px auto;max-width:900px;box-shadow:0 0 0 100vmax var(--bg-main);z-index:10;position:relative;border-radius:var(--radius-main)}
+#editor.blurred{filter:blur(7px)}
+body.blur-write #btn-blur{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.toolbar{background:var(--bg-toolbar);padding:12px 20px;display:flex;gap:12px;align-items:center;border-bottom:1px solid rgba(255,255,255,.05);flex-wrap:wrap;box-shadow:0 2px 10px rgba(0,0,0,.1);z-index:20}
+button{background:var(--ui-soft);color:var(--text-main);border:1px solid var(--ui-border);padding:8px 14px;border-radius:var(--radius-sm);cursor:pointer;font:inherit;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;transition:background-color .15s,transform .15s;white-space:nowrap}
+button:hover{background:var(--ui-hover);transform:translateY(-1px)}
+.btn-access{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn-access:hover{background:var(--accent-hover)}
+.btn-danger{background:rgba(214,48,49,.1);border-color:rgba(214,48,49,.3);color:#ff7675}
+.btn-danger:hover{background:rgba(214,48,49,.2)}
+.study-timer-container{display:flex;align-items:center;background:rgba(0,0,0,.2);padding:6px 14px;border-radius:20px;font-family:ui-monospace,monospace;font-size:14px;border:1px solid rgba(255,255,255,.05)}
+.study-timer-btn{background:none;border:none;padding:0 4px;font-size:13px;margin:0;box-shadow:none}
+.study-timer-btn:hover{background:none;transform:scale(1.1)}
+.mobile-tab-bar{display:none}
+#stats{margin-left:auto;font-size:12px;opacity:.8;white-space:nowrap}
+#xp-badge{margin-left:0;font-size:13px;color:#f1c40f;font-weight:700;background:rgba(241,196,15,.1);padding:6px 12px;border-radius:20px;border:1px solid rgba(241,196,15,.2);transition:transform .2s;display:none}
+.main-container{display:flex;flex:1;overflow:hidden;padding:12px;gap:12px;position:relative}
+#editor{flex:1;padding:20px;font-family:var(--note-font);background:var(--bg-editor);color:var(--text-main);border:1px solid rgba(255,255,255,.05);border-radius:var(--radius-main);resize:none;outline:none;font-size:var(--editor-font-size);line-height:var(--editor-line-height);white-space:pre-wrap;word-break:break-word;overflow-y:auto;box-shadow:inset 0 2px 10px rgba(0,0,0,.02);transition:filter .3s ease}
+.output-container{flex:1.2;display:flex;flex-direction:column;gap:12px;overflow:hidden;position:relative}
+#text-preview{flex:1;padding:24px;font-family:var(--note-font);background:var(--bg-preview);border:1px solid rgba(255,255,255,.05);border-radius:var(--radius-main);overflow-y:auto;font-size:16px;line-height:1.8;white-space:pre-wrap;word-break:break-word}
+#map-preview-container{flex:1;min-height:180px;padding:8px;background:var(--bg-map);border:1px solid rgba(255,255,255,.05);border-radius:var(--radius-main);display:flex;flex-direction:column;position:relative;overflow:hidden}
+.map-orient{position:relative;z-index:5;display:flex;flex:0 0 auto;gap:6px;align-items:center;flex-wrap:wrap;background:var(--bg-toolbar);border:1px solid var(--ui-border);padding:4px;border-radius:var(--radius-sm);align-self:flex-end;max-width:100%}
+.map-orient button{padding:4px 10px;font-size:11px;opacity:.8;transform:none}
+.map-orient button.active{background:var(--accent);border-color:var(--accent);opacity:1;color:var(--on-accent)}
+#map-viewport{position:relative;flex:1;min-height:0;overflow:hidden;touch-action:none;cursor:grab}
+#map-viewport.is-panning{cursor:grabbing;user-select:none}
+#map-viewport:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+#map-preview{position:absolute;inset:0;width:100%;height:100%;min-width:0;min-height:0;display:block}
+#map-preview svg{display:block;width:100%;height:100%;max-width:none!important;overflow:hidden}
+#map-zoom-label{min-width:42px;text-align:center;font-size:11px;font-variant-numeric:tabular-nums;opacity:.8}
+#map-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;padding:18px;text-align:center;opacity:.62;font-size:13px;line-height:1.6}
+#map-empty[hidden]{display:none}
+#map-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;padding:18px;text-align:center}
+.hl-comma{background:rgba(241,196,15,.08);border-bottom:1px dotted var(--accent-text);padding:0 1px}
+.hl-number{font-weight:700;color:var(--accent-text)}
+.hl-mention{color:var(--accent-text);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px}
+#text-preview.is-editable{outline:2px solid var(--accent);outline-offset:-2px;cursor:text}
+#preview-toolbar{display:flex;justify-content:flex-end;gap:6px;flex:0 0 auto;align-items:center}
+#preview-toolbar button{padding:4px 9px;font-size:11px}
+#preview-toolbar .preview-mode{margin-right:auto;align-self:center;font-size:11px;opacity:.7}
+#preview-toolbar .preview-toggle.on{background:var(--accent);color:var(--on-accent)}
+#simplify-box{display:none;position:absolute;top:12px;right:12px;z-index:4;max-width:40%;max-height:40%;overflow-y:auto;background:linear-gradient(rgba(0,184,148,.15),rgba(0,184,148,.15)),var(--bg-toolbar);border:1px solid var(--pro-color);border-radius:var(--radius-sm);padding:12px;font-size:14px;box-shadow:0 4px 15px rgba(0,0,0,.2)}
+#simplify-box.visible{display:block;animation:slideIn .3s ease}
+#simplify-box .sb-title{font-size:11px;font-weight:700;color:var(--pro-text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+@keyframes slideIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.callout-box{padding:12px 16px;border-radius:var(--radius-sm);margin:12px 0;font-size:15px;background:rgba(255,255,255,.03);border-left:4px solid #888}
+.callout-important{border-left-color:#d63031;background:rgba(214,48,49,.08)}
+.callout-doubt{border-left-color:#f1c40f;background:rgba(241,196,15,.08)}
+.callout-note{border-left-color:#0984e3;background:rgba(9,132,227,.08)}
+.callout-title{font-weight:700;margin-bottom:4px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;opacity:.7}
+.c-text{font-weight:500}.c-important{color:#ff7675}.c-doubt{color:#f1c40f}.c-note{color:#74b9ff}
+body.theme-chiaro .c-important,body.theme-seppia .c-important{color:#d63031}
+body.theme-chiaro .c-doubt,body.theme-seppia .c-doubt{color:#d4ac0d}
+body.theme-chiaro .c-note,body.theme-seppia .c-note{color:#0984e3}
+.hl{background:rgba(241,196,15,.25);padding:2px 6px;border-radius:4px;border-bottom:2px solid #f1c40f;font-weight:600;color:inherit;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.mood-status{font-weight:700;white-space:nowrap;color:var(--pro-text)}.mood-status.mood-not-understood{color:var(--con-color)}
+#task-widget{display:none;position:absolute;bottom:20px;right:20px;width:280px;background:var(--bg-toolbar);border:1px solid var(--accent);border-radius:var(--radius-main);padding:15px;box-shadow:0 8px 25px rgba(0,0,0,.3);z-index:50}
+#task-widget h4{margin:0 0 10px;font-size:13px;color:var(--accent-text);display:flex;justify-content:space-between;align-items:center}
+#task-input{width:100%;background:var(--ui-field);border:1px solid var(--ui-border);color:var(--text-main);padding:8px;border-radius:6px;font-size:13px;margin-bottom:10px;box-sizing:border-box;outline:none}
+.task-list{max-height:150px;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+.task-item{display:flex;align-items:center;gap:8px;font-size:13px;background:rgba(255,255,255,.03);padding:6px 8px;border-radius:6px;transition:.2s}
+.task-item input[type=checkbox]{accent-color:var(--pro-color);cursor:pointer;width:16px;height:16px}
+.task-item.done{text-decoration:line-through;opacity:.5;background:rgba(0,184,148,.1);border-left:3px solid var(--pro-color)}
+.xp-float{position:absolute;color:#f1c40f;font-weight:700;font-size:16px;pointer-events:none;animation:floatUp 1s ease-out forwards;z-index:999;text-shadow:0 2px 4px rgba(0,0,0,.5)}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-40px) scale(1.2)}}
+.modal{display:flex;visibility:hidden;opacity:0;pointer-events:none;transition:opacity .15s,visibility .15s;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.6);justify-content:center;align-items:center}
+.modal.open{visibility:visible;opacity:1;pointer-events:auto}
+.modal-content{background:var(--bg-toolbar);padding:24px;border-radius:var(--radius-main);width:440px;max-width:90%;max-height:85vh;overflow-y:auto;border:1px solid rgba(255,255,255,.08);box-shadow:0 10px 40px rgba(0,0,0,.3)}
+.setting-section{margin-bottom:20px;background:rgba(0,0,0,.1);padding:16px;border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,.02)}
+.setting-section h4{margin:0 0 12px;color:var(--accent-text);font-size:13px;text-transform:uppercase;letter-spacing:.5px}
+.setting-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:14px;gap:10px}.setting-row>label:not(.toggle-switch){cursor:pointer}
+.setting-select{background:var(--ui-field);color:var(--text-main);border:1px solid var(--ui-border);padding:6px 10px;border-radius:6px;font:inherit;font-size:13px;outline:none;color-scheme:dark}
+.setting-select option{background:var(--bg-toolbar);color:var(--text-main)}
+.theme-chiaro .setting-select,.theme-seppia .setting-select{color-scheme:light}
+.setting-select:focus-visible{outline:2px solid var(--accent-text);outline-offset:2px}
+body.theme-chiaro,body.theme-seppia{color-scheme:light}
+body:not(.theme-chiaro):not(.theme-seppia){color-scheme:dark}
+.toggle-switch{position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0;cursor:pointer}
+.toggle-switch input{position:absolute;inset:0;z-index:1;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.slider{position:absolute;pointer-events:none;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--ui-off);border-radius:22px;transition:.3s}
+.toggle-switch input:focus-visible+.slider{outline:2px solid var(--accent-text);outline-offset:3px}
+.slider:before{position:absolute;content:"";height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;box-shadow:0 2px 4px rgba(0,0,0,.2)}
+input:checked+.slider{background:var(--accent)}
+input:checked+.slider:before{transform:translateX(18px)}
+@media(max-width:768px){
+.toolbar{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:8px 12px;gap:8px}
+.toolbar::-webkit-scrollbar{display:none}
+.mobile-tab-bar{display:flex;background:var(--bg-toolbar);border-bottom:1px solid rgba(255,255,255,.05);padding:6px;gap:6px;flex-shrink:0}
+.mob-tab-btn{flex:1;padding:8px;font-size:12px;justify-content:center;background:var(--ui-soft);border:none;border-radius:var(--radius-sm);color:var(--text-main)}
+.mob-tab-btn.active{background:var(--accent);color:var(--on-accent);font-weight:600}
+.main-container{flex-direction:column;padding:8px;gap:8px}
+body:not(.m-tab-editor) #editor{display:none!important}
+body:not(.m-tab-preview) #text-preview{display:none!important}
+body:not(.m-tab-map) #map-preview-container{display:none!important}
+body.m-tab-preview .output-container,body.m-tab-map .output-container{display:flex!important;flex:1;width:100%;height:100%}
+#task-widget{width:calc(100% - 32px);bottom:12px;right:16px;left:16px}}
+
+.btn-grid{display:flex;flex-wrap:wrap;gap:8px}
+.lib-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:var(--ui-soft);margin-bottom:6px;cursor:pointer}
+.lib-item.active{outline:2px solid var(--accent)}
+.lib-item .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
+.lib-item small{display:block;opacity:.65;font-size:11px}
+.lib-item button{padding:4px 8px}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg-toolbar);color:var(--text-main);border:1px solid var(--accent);padding:8px 16px;border-radius:20px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:2000}
+#toast.show{opacity:1}
+#print-header{display:none}
+body.print-light{--bg-main:#fff;--bg-toolbar:#f0f0f0;--bg-editor:#fff;--bg-preview:#fff;--bg-map:#fff;--text-main:#111;--accent:#0984e3;--on-accent:#fff;--accent-text:#0662b0;--pro-text:#00755d}
+body.print-light .c-important{color:#b71c1c}body.print-light .c-doubt{color:#7a5d00}body.print-light .c-note{color:#0b5394}
+.w.cur{background:var(--accent);color:var(--on-accent);border-radius:4px;padding:0 2px}
+.w b{font-weight:800}
+button.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.map-orient{flex-wrap:wrap;max-width:calc(100% - 24px);justify-content:flex-end}
+#read-bar{display:none;position:absolute;left:12px;right:12px;bottom:12px;z-index:30;align-items:center;gap:8px;flex-wrap:wrap;background:var(--bg-toolbar);border:1px solid var(--accent);border-radius:var(--radius-main);padding:8px 12px;box-shadow:0 6px 20px rgba(0,0,0,.25);font-size:13px}
+body.reader-on #task-widget{bottom:84px}
+body.anchor-on .w{font-weight:400}
+body.reader-on #text-preview{padding-bottom:110px}
+#rsvp-box{display:none;position:absolute;left:12px;right:12px;bottom:70px;z-index:29;grid-template-columns:1fr auto 1fr;align-items:baseline;background:var(--bg-toolbar);border:1px solid var(--accent);border-radius:var(--radius-main);padding:18px 12px;font-size:clamp(22px,5vw,36px);font-family:var(--note-font);box-shadow:0 6px 20px rgba(0,0,0,.25)}
+body.rsvp-on #rsvp-box{display:grid}
+.rv-l{text-align:right}.rv-p{color:var(--reader-pivot,#ff7675);font-weight:800}
+details p{margin:6px 0}
+@page{margin:15mm}
+#btn-view-exit[hidden]{display:none!important}
+@media(min-width:769px){
+body.view-map-only #editor,body.view-map-only #text-preview,body.view-map-only #preview-toolbar,body.view-map-only #simplify-box,body.view-map-only #read-bar,body.view-map-only #rsvp-box,body.view-map-only #btn-branch,body.view-preview-only #editor,body.view-preview-only #map-preview-container{display:none!important}
+body.view-map-only .output-container,body.view-preview-only .output-container{display:flex!important;flex:1;width:100%;position:relative;z-index:auto}
+body.view-map-only.focus-mode.reader-on #map-preview-container{display:flex!important}
+body.view-map-only #map-preview-container{flex:1}
+body.view-preview-only #text-preview{flex:1}}
+@media(max-width:768px){#btn-view-exit,#btn-view-map,#btn-view-preview{display:none!important}}
+@media print{
+body:not(.zz){display:block!important;height:auto!important;overflow:visible!important;background:#fff!important;color:#111!important}
+body:not(.zz) .toolbar,body:not(.zz) .mobile-tab-bar,body:not(.zz) #editor,body:not(.zz) .modal,body:not(.zz) #task-widget,body:not(.zz) .map-orient,body:not(.zz) #preview-toolbar,body:not(.zz) #simplify-box,body:not(.zz) #toast,body:not(.zz) .nomap{display:none!important}
+body:not(.zz) .main-container,body:not(.zz) .output-container{display:block!important;overflow:visible!important;padding:0!important;height:auto!important}
+body:not(.zz) #text-preview{display:block!important;overflow:visible!important;height:auto!important;border:none!important;background:#fff!important;color:#111!important;padding:0!important;font-size:12pt!important}
+body:not(.zz) #map-preview-container{display:flex!important;overflow:visible!important;border:none!important;background:#fff!important;break-inside:avoid;margin-top:16pt;padding:0!important}
+body:not(.zz) #map-viewport{position:static!important;display:block!important;overflow:visible!important;min-height:0!important;height:auto!important}
+body:not(.zz) #map-preview{position:static!important;inset:auto!important;width:100%!important;height:auto!important}
+body:not(.zz) #map-preview svg{max-width:100%!important;height:auto!important}
+body:not(.zz) #print-header{display:block!important;border-bottom:1px solid #ccc;margin-bottom:14pt}
+#print-header h1{font-size:20pt;margin:0 0 4pt;color:#111}#print-date{font-size:10pt;color:#555;margin-bottom:6pt}
+.hl,.callout-box{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.w.cur{background:none!important;color:inherit!important}
+body:not(.zz) #read-bar,body:not(.zz) #rsvp-box{display:none!important}}
+</style>
+</head>
+<body class="m-tab-editor">
+<div id="settings-modal" class="modal"><div class="modal-content">
+<div style="display:flex;justify-content:space-between;margin-bottom:20px;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:12px"><h3 style="margin:0;font-size:18px">⚙ Configurazione Interfaccia</h3><button style="background:none;border:none;color:var(--text-main);font-size:20px;cursor:pointer;padding:0" onclick="toggleModal()">✖</button></div>
+<div class="setting-section"><h4>🎨 Stile & UI</h4>
+<div class="setting-row"><label for="language-select">Lingua / Language</label><select id="language-select" class="setting-select" aria-label="Lingua / Language" onchange="changeLanguage(this.value)"><option value="it">Italiano</option><option value="en">English</option></select></div>
+<div class="setting-row"><label for="sel-theme">Tema Colori</label><select id="sel-theme" class="setting-select" onchange="updateConfig('theme',this.value)"><option value="">Scuro (Default)</option><option value="scifi">Sci-Fi (Cyber)</option><option value="notte">Notte (Blu scuro)</option><option value="foresta">Foresta (Verde)</option><option value="seppia">Seppia (Caldo)</option><option value="chiaro">Chiaro</option></select></div>
+<div class="setting-row"><label for="sel-font">Font Appunti</label><select id="sel-font" class="setting-select" onchange="updateConfig('font',this.value)"><option value="system-ui, sans-serif">Sans serif di sistema</option><option value="Georgia, serif">Serif di sistema</option><option value="ui-monospace, monospace">Monospace di sistema</option></select></div></div>
+<div class="setting-section"><h4>🗺 Personalizzazione Mappa</h4><div id="map-opts"></div><button onclick="resetMapOpts()" style="width:100%;justify-content:center">↺ Ripristina mappa</button></div>
+<div class="setting-section"><h4>🧩 Marcatori e testo</h4><p style="font-size:12px;line-height:1.5;opacity:.8;margin:0 0 12px">Le evidenziazioni e le modifiche all’anteprima non cambiano gli appunti originali. Quando scrivi negli appunti a sinistra, l’anteprima torna ad aggiornarsi e le modifiche manuali a destra vengono sostituite. Lo stato :) / :( può comparire anche nella mappa; gli appunti a sinistra restano la fonte del testo salvato e della mappa.</p><div id="text-opts"></div></div>
+<div class="setting-section"><h4>⚡ Lettura ad ancore & Veloce</h4><div id="read-opts"></div><details style="font-size:13px;line-height:1.5;margin-top:6px"><summary style="cursor:pointer;font-weight:600">ℹ️ Come funzionano</summary>
+<p><b>Lettura ad ancore:</b> mette in grassetto una parte iniziale di ogni parola per creare un diverso contrasto visivo. Non modifica il testo salvato e non è dimostrato che faccia leggere più velocemente: usala se personalmente ti risulta più comoda.</p>
+<p><b>Guida nel testo:</b> evidenzia una parola alla volta mantenendola nel suo contesto e scorre automaticamente. La velocità è espressa in parole al minuto; la pausa si adatta alla lunghezza della parola e alla punteggiatura.</p>
+<p><b>Una parola alla volta (RSVP):</b> presenta ogni parola in un punto fisso, con una lettera centrale evidenziata. Riduce i movimenti oculari, ma mostra meno contesto: scegli la modalità e la velocità che ti aiutano a capire, non solo a scorrere.</p>
+<p><b>Audio:</b> la lettura veloce è solo visiva, non parla. Per ascoltare la voce del browser, attiva “Pulsante Leggi ad alta voce” nelle impostazioni e poi premi 🔊 Leggi.</p>
+<p><b>Tasti:</b> Spazio = avvia/pausa · ← → = una parola · ↑ ↓ = velocità. I tasti non interferiscono con i campi di testo o con i controlli.</p>
+<p><b>Ricerca:</b> un esperimento sulla lettura con inizio parola in grassetto non ha trovato un vantaggio generale di velocità; le preferenze individuali possono comunque variare. Anche la presentazione RSVP non è equivalente alla lettura normale: aumenta gradualmente la velocità e fai pause se cala la comprensione. Riferimenti (testo non cliccabile): Snell (2024), Acta Psychologica, DOI 10.1016/j.actpsy.2024.104304 · Benedetto et al. (2015), RSVP, DOI 10.1016/j.chb.2014.12.043.</p></details></div>
+<div id="toggles"></div>
+<details class="setting-section" style="font-size:13px;line-height:1.5"><summary style="cursor:pointer;font-weight:600">Licenze e uso offline</summary>
+<p>Mermaid 10.9.8, usato per generare le mappe, è distribuito con licenza MIT e copyright © 2014–2022 Knut Sveidqvist. Il testo completo della licenza è riportato qui sotto.</p>
+<p>L'app funziona offline: script e caratteri utilizzati sono inclusi o già disponibili sul dispositivo. Non invia richieste in rete e non trasmette le note a un server.</p>
+<p>Le note e le impostazioni sono conservate localmente nel browser o nel profilo dell'app. Non sono cifrate automaticamente: proteggi l'account del dispositivo e esporta in .txt le note importanti.</p>
+<p>Note-all-in-one è distribuito con licenza GNU GPL versione 3 o successive.</p>
+<details><summary style="cursor:pointer;font-weight:600">Licenza di Note-all-in-one (GPL-3.0-or-later)</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere">NOTE-ALL-IN-ONE
+Copyright (C) 2026 Raffaele Giamomello
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see &lt;https://gnu.org&gt;.
+
+----------------------------------------------------------------------
+NO WARRANTY AND LIMITATION OF LIABILITY ("AS IS")
+----------------------------------------------------------------------
+THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
+APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
+HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT
+WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND
+PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE
+DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR
+OR CORRECTION.
+
+IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR
+CONVEYS THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES,
+INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES
+ARISING OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT
+NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR
+LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM
+TO OPERATE WITH ANY OTHER PROGRAMS), EVEN IF SUCH HOLDER OR OTHER
+PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.</pre></details>
+<details><summary style="cursor:pointer;font-weight:600">Licenza MIT completa (Mermaid)</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere">The MIT License (MIT)
+
+Copyright (c) 2014 - 2022 Knut Sveidqvist
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</pre></details></details>
+<button onclick="toggleModal()" style="width:100%;justify-content:center;background:var(--accent);color:var(--on-accent);border:none;padding:12px;font-size:15px">Salva e Chiudi</button>
+</div></div>
+<div id="lib-modal" class="modal"><div class="modal-content" style="width:520px">
+<div style="display:flex;justify-content:space-between;margin-bottom:20px;border-bottom:1px solid var(--ui-border);padding-bottom:12px"><h3 style="margin:0;font-size:18px">📁 Note & Salvataggio</h3><button style="background:none;border:none;color:var(--text-main);font-size:20px;cursor:pointer;padding:0" onclick="toggleModal('lib-modal')">✖</button></div>
+<div class="setting-section"><h4>📚 Le mie note</h4>
+<div style="display:flex;gap:8px;margin-bottom:10px"><input id="lib-search" class="setting-select" style="flex:1;min-width:0" placeholder="Cerca nelle note..." oninput="renderLib()"><button class="btn-access" onclick="newNote()">＋ Nuova</button></div>
+<div id="lib-list"></div><div id="lib-info" style="font-size:12px;opacity:.7;margin-top:6px"></div></div>
+<div class="setting-section"><h4>📤 Esporta</h4><div class="btn-grid"><button onclick="exportTxt()">📄 Testo (.txt)</button></div></div>
+</div></div>
+<div id="toast"></div>
+<div id="print-header"><h1 id="print-title"></h1><div id="print-date"></div></div>
+<div class="toolbar">
+<button class="btn-access" onclick="toggleModal()">⚙ Setup</button>
+<button id="btn-view-exit" class="btn-access" type="button" onclick="setView('all')" title="Torna alla vista completa (Esc)" hidden>↩ Vista completa</button>
+<button id="btn-lib" class="btn-access" onclick="toggleModal('lib-modal')" style="max-width:220px" title="Note ed esportazione">📁 <span id="lib-name" style="overflow:hidden;text-overflow:ellipsis">Note</span></button>
+<div class="study-timer-container" id="study-timer-box">⏱ <span id="timer-display" style="margin:0 8px">25:00</span>
+<button class="study-timer-btn" onclick="startStudyTimer(25)" title="Studio" style="color:var(--pro-color)">▶</button>
+<button class="study-timer-btn" onclick="startStudyTimer(5)" title="Pausa" style="color:var(--accent)">☕</button>
+<button class="study-timer-btn" onclick="stopStudyTimer()" title="Stop" style="color:var(--con-color)">⏹</button></div>
+<button id="btn-anchor" aria-pressed="false" onclick="updateConfig('anchor',!config.anchor)" title="Lettura ad ancore">👓 Ancore</button>
+<button id="btn-read" onclick="toggleReadBar()" title="Lettura veloce con guida">⏩ Lettura veloce</button>
+<button id="btn-tts" onclick="leggiTesto()" style="display:none">🔊 Leggi</button>
+<button id="btn-blur" onclick="toggleBlur()">🌫 Focus Blur</button>
+<button class="btn-danger" onclick="cancellaTutto()" title="Cancella tutto">🗑 Pulisci</button>
+<span id="stats"></span><span id="xp-badge">✨ Livello 1 (0 XP)</span>
+</div>
+<div class="mobile-tab-bar">
+<button class="mob-tab-btn active" onclick="switchMobileTab('editor',event)">📝 Modifica</button>
+<button class="mob-tab-btn" onclick="switchMobileTab('preview',event)">📖 Anteprima</button>
+<button class="mob-tab-btn" onclick="switchMobileTab('map',event)">🗺 Mappa</button>
+</div>
+<div class="main-container">
+<textarea id="editor" placeholder="Inizia a scrivere i tuoi appunti...&#10;&#10;✨ Sintassi Evidenziatore:&#10;Testo:: Il tuo testo qui fino al punto.&#10;&#10;Sintassi testuali:&#10;• !!! Importante&#10;• ??? Dubbio&#10;• i! Nota&#10;• Frase difficile === Frase facile&#10;&#10;Sintassi mappa:&#10;• Concetto A >> Concetto B >> Concetto C&#10;• per collegare altro a B scrivi, dove vuoi: B >> C"></textarea>
+<div class="output-container">
+<div id="simplify-box"></div>
+<div id="preview-toolbar"><span id="preview-mode" class="preview-mode"></span><button id="preview-bold" type="button" onclick="formatPreview('bold')" title="Grassetto" aria-label="Grassetto" hidden>B</button><button id="preview-italic" type="button" onclick="formatPreview('italic')" title="Corsivo" aria-label="Corsivo" hidden><i>I</i></button><button id="preview-reset" type="button" onclick="resetPreview()" title="Ripristina il testo generato" hidden>↺</button><button id="btn-view-preview" type="button" onclick="setView(viewMode==='preview'?'all':'preview')" title="Mostra solo l'anteprima" aria-pressed="false">⛶ Solo anteprima</button><button id="preview-toggle" class="preview-toggle" type="button" onclick="togglePreviewEditing()" aria-pressed="false">Modifica anteprima</button></div>
+<div id="text-preview" role="textbox" aria-label="Anteprima del testo" aria-multiline="true" aria-readonly="true" tabindex="0"></div>
+<div id="map-preview-container">
+<div class="map-orient">
+<button id="btn-branch" onclick="insertBranch()" title="Inserisci una parola con 2 frecce">⑂ 2 frecce</button>
+<button id="dir-TD" class="active" onclick="setMapDir('TD')">↕ Vert</button>
+<button id="dir-LR" onclick="setMapDir('LR')">↔ Oriz</button>
+<button onclick="zoomMap(.15)" title="Ingrandisci mappa" aria-label="Ingrandisci mappa">🔍 +</button>
+<button onclick="zoomMap(-.15)" title="Rimpicciolisci mappa" aria-label="Rimpicciolisci mappa">🔍 -</button>
+<span id="map-zoom-label" aria-live="polite">100%</span>
+<button onclick="resetZoomMap()" title="Centra e ripristina dimensione">↺ Centra</button>
+<button id="btn-view-map" type="button" onclick="setView(viewMode==='map'?'all':'map')" title="Mostra solo la mappa" aria-pressed="false">⛶ Solo mappa</button></div>
+<div id="map-viewport" role="region" aria-label="Area della mappa; trascina per spostare, rotellina per ingrandire; premi Home o 0 per centrare"><div id="map-empty" hidden></div><div id="map-preview"></div></div></div>
+<div id="task-widget"><h4>🎯 Micro-Task <span style="font-size:10px;font-weight:400;opacity:.7">Dividi per vincere</span></h4>
+<input type="text" id="task-input" placeholder="Aggiungi piccolo step e premi Invio..." onkeypress="handleTaskInput(event)">
+<div class="task-list" id="task-list"></div></div>
+<div id="read-bar"><button id="rb-play" onclick="toggleRead()" title="Avvia / Pausa" aria-label="Avvia o metti in pausa la lettura">▶</button><button onclick="readSeek(-10)" title="Indietro di 10 parole" aria-label="Indietro di 10 parole">⏪</button><button onclick="readSeek(10)" title="Avanti di 10 parole" aria-label="Avanti di 10 parole">⏩</button><button onclick="readSpeed(-25)" title="Più lento" aria-label="Riduci velocità">−</button><span><b id="rb-wpm">250</b> parole/min</span><button onclick="readSpeed(25)" title="Più veloce" aria-label="Aumenta velocità">+</button><input type="range" id="rb-pos" min="0" max="0" value="0" aria-label="Posizione di lettura" style="flex:1;min-width:90px" oninput="readGo(this.value)" onchange="this.blur()"><button onclick="stopRead()" title="Ferma e riparti dall'inizio" aria-label="Ferma e riparti dall'inizio">⏹</button></div>
+<div id="rsvp-box"><div class="rv-l"></div><div class="rv-p"></div><div class="rv-r"></div></div>
+</div></div>
+<script src="./app.js" defer></script>
+</body>
+</html>

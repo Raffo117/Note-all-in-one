@@ -1,0 +1,91 @@
+{
+  "name": "note-all-in-one",
+  "version": "1.0.13",
+  "description": "Note-all-in-one desktop app, designed to work offline",
+  "author": "Note-all-in-one",
+  "homepage": "https://github.com/Raffo117/Note-all-in-one",
+  "license": "GPL-3.0-or-later",
+  "main": "main.cjs",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win nsis --x64",
+    "dist:linux": "electron-builder --linux AppImage deb --x64",
+    "dist:linux:portable": "electron-builder --linux dir --x64 --publish never",
+    "build:offline": "python scripts/build-offline-html.py"
+  },
+  "devDependencies": {
+    "electron": "44.10.2",
+    "electron-builder": "26.15.3"
+  },
+  "build": {
+    "appId": "it.noteallinone.desktop",
+    "productName": "Note-all-in-one",
+    "asar": true,
+    "publish": [],
+    "files": [
+      "main.cjs",
+      "index.html",
+      "app.js",
+      "LICENSE",
+      "COPYING",
+      "THIRD_PARTY_NOTICES.md",
+      "vendor/mermaid.min.js",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "build-resources/note-all-in-one.png",
+        "to": "build-resources/note-all-in-one.png"
+      }
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "artifactName": "Note-all-in-one-${version}-${arch}.${ext}",
+    "win": {
+      "icon": "build-resources/note-all-in-one.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "linux": {
+      "icon": "build-resources/note-all-in-one.png",
+      "category": "Office",
+      "maintainer": "Raffaele Giamomello",
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "electronFuses": {
+      "runAsNode": false,
+      "enableNodeOptionsEnvironmentVariable": false,
+      "enableNodeCliInspectArguments": false,
+      "onlyLoadAppFromAsar": true,
+      "grantFileProtocolExtraPrivileges": false
+    }
+  }
+}
