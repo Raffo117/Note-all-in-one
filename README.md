@@ -2,6 +2,11 @@
 
 Versione sorgente 1.0.13 dell'app desktop offline Note-all-in-one.
 
+## Download diretti
+
+- **[Windows 64 bit (.exe)](https://github.com/Raffo117/Note-all-in-one/releases/download/v1.0.13/Note-all-in-one-1.0.13-x64.exe)** — installer interattivo.
+- **[Linux 64 bit (AppImage)](https://github.com/Raffo117/Note-all-in-one/releases/download/v1.0.13/Note-all-in-one-1.0.13-x86_64.AppImage)** — pacchetto portabile.
+
 ## Compilazione
 
 Requisiti: Node.js 22 e Python per gli script di supporto. Per installare le
